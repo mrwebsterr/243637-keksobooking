@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Anar Amirov](https://up.htmlacademy.ru/javascript/11/user/243637).
-* Наставник: `Неизвестно`.
+* Наставник: 'Александр Федотов'.
 
 ---
 
