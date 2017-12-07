@@ -79,6 +79,7 @@ var fragment = document.createDocumentFragment();
 var mapBlock = document.querySelector('.map');
 var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var mapCardTemplate = document.querySelector('template').content.querySelector('.map__card');
+
 var featuresListTemplate = document.querySelector('template').content.querySelector('.popup__features');
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapFiltersContainer = document.querySelector('.map__filters-container');
@@ -101,14 +102,15 @@ var renderFeaturePopup = function (popup) {
   mapCard.querySelector('.map__card h4 + p').textContent = popup.offer.rooms + ' комнаты для ' + popup.offer.guests + ' гостей';
   mapCard.querySelector('.map__card h4 + p + p').textContent = 'Заезд после ' + popup.offer.checkin + ', выезд до ' + popup.offer.checkout;
   mapCard.querySelector('.map__card h4').textContent = offerTypeOutput[popup.offer.type].name;
+  mapCard.querySelector('.popup img').src = popup.author.avatar;
   for (var j = 0; j < popup.offer.features.length; j++) {
     var li = document.createElement('li');
     li.classList = 'feature feature--' + popup.offer.features[j];
     featuresList.appendChild(li);
   }
+  mapCard.classList.add('hidden');
   return mapCard;
 };
-
 
 var appendRendered = function (element, block) {
   for (var i = 0; i < similarAds.length; i++) {
@@ -124,9 +126,58 @@ var insertRenderedBefore = function (element, insertBlock, beforeBlock) {
   return insertBlock.insertBefore(fragment, beforeBlock);
 };
 
-removeChildren(featuresListTemplate);
-generateSimilarAds(8);
-appendRendered(renderPins, mapPinsBlock);
-insertRenderedBefore(renderFeaturePopup, mapBlock, mapFiltersContainer);
+var mainPin = document.querySelector('.map__pin--main');
+var mapPins = document.querySelector('.map__pins');
+var fieldset = document.querySelectorAll('.notice__form fieldset');
+var form = document.querySelector('.notice__form');
+for (var i = 0; i < fieldset.length; i++) {
+  fieldset[i].setAttribute('disabled', 'disabled');
+}
 
-mapBlock.classList.remove('map--faded');
+var onMainPinMouseup = function () {
+  mapBlock.classList.remove('map--faded');
+  removeChildren(featuresListTemplate);
+  generateSimilarAds(8);
+  appendRendered(renderPins, mapPinsBlock);
+  insertRenderedBefore(renderFeaturePopup, mapBlock, mapFiltersContainer);
+  for (var j = 0; j < fieldset.length; j++) {
+    fieldset[j].removeAttribute('disabled');
+  }
+  form.classList.remove('notice__form--disabled');
+  mainPin.removeEventListener('mouseup', onMainPinMouseup);
+};
+
+mainPin.addEventListener('mouseup', onMainPinMouseup);
+
+
+var selectedPin;
+var selectPin = function (node) {
+  if (selectedPin) {
+    selectedPin.classList.remove('map__pin--active');
+  }
+  selectedPin = node;
+  selectedPin.classList.add('map__pin--active');
+};
+
+var clickHandler = function (evt) {
+  var target = evt.target;
+  while (target !== mapPins) {
+    if (target.tagName === 'BUTTON') {
+      selectPin(target);
+      return;
+    }
+    target = target.parentNode;
+  }
+};
+
+
+mapPins.addEventListener('click', clickHandler);
+
+
+var popup = document.querySelectorAll('.popup');
+var closePopup = function () {
+  popup.classList.add('hidden');
+};
+var openPopup = function () {
+  popup.classList.remove('hidden');
+};
