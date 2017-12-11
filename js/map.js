@@ -1,4 +1,6 @@
 'use strict';
+var ENTER_KEY_CODE = 13;
+var ESC_KEY_CODE = 27;
 
 var randomNumberInRange = function (min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -118,6 +120,7 @@ var appendRendered = function (element, block) {
   }
   return block.appendChild(fragment);
 };
+
 // Функция добавляет элементы в insertBlock перед beforeBlock
 var insertRenderedBefore = function (element, insertBlock, beforeBlock) {
   for (var i = 0; i < similarAds.length; i++) {
@@ -130,9 +133,19 @@ var mainPin = document.querySelector('.map__pin--main');
 var mapPins = document.querySelector('.map__pins');
 var fieldset = document.querySelectorAll('.notice__form fieldset');
 var form = document.querySelector('.notice__form');
-for (var i = 0; i < fieldset.length; i++) {
-  fieldset[i].setAttribute('disabled', 'disabled');
-}
+var selectedPin;
+
+var disableFormFields = function () {
+  for (var i = 0; i < fieldset.length; i++) {
+    fieldset[i].setAttribute('disabled', 'disabled');
+  }
+};
+var enableFormFields = function () {
+  for (var i = 0; i < fieldset.length; i++) {
+    fieldset[i].removeAttribute('disabled');
+  }
+  form.classList.remove('notice__form--disabled');
+};
 
 var onMainPinMouseup = function () {
   mapBlock.classList.remove('map--faded');
@@ -140,17 +153,11 @@ var onMainPinMouseup = function () {
   generateSimilarAds(8);
   appendRendered(renderPins, mapPinsBlock);
   insertRenderedBefore(renderFeaturePopup, mapBlock, mapFiltersContainer);
-  for (var j = 0; j < fieldset.length; j++) {
-    fieldset[j].removeAttribute('disabled');
-  }
-  form.classList.remove('notice__form--disabled');
+  enableFormFields();
+  closePopup();
   mainPin.removeEventListener('mouseup', onMainPinMouseup);
 };
 
-mainPin.addEventListener('mouseup', onMainPinMouseup);
-
-
-var selectedPin;
 var selectPin = function (node) {
   if (selectedPin) {
     selectedPin.classList.remove('map__pin--active');
@@ -161,23 +168,55 @@ var selectPin = function (node) {
 
 var clickHandler = function (evt) {
   var target = evt.target;
+  var targetSrc = target.src;
   while (target !== mapPins) {
     if (target.tagName === 'BUTTON') {
       selectPin(target);
+      openPopup(targetSrc);
       return;
     }
     target = target.parentNode;
   }
 };
+var keyDownHandler = function (evt) {
+  if (evt.keyCode === ENTER_KEY_CODE) {
+    var target = evt.target.querySelector('img');
+    var targetSrc = target.src;
+    selectPin(evt.target);
+    openPopup(targetSrc);
+  }
+};
 
-
-mapPins.addEventListener('click', clickHandler);
-
-
-var popup = document.querySelectorAll('.popup');
 var closePopup = function () {
-  popup.classList.add('hidden');
+  var popupCloseBtn = document.querySelectorAll('.popup__close');
+  for (var i = 0; i < popupCloseBtn.length; i++) {
+    popupCloseBtn[i].addEventListener('click', function (evt) {
+      var targetParent = evt.target.parentNode;
+      targetParent.classList.add('hidden');
+      selectedPin.classList.remove('map__pin--active');
+    });
+  }
 };
-var openPopup = function () {
-  popup.classList.remove('hidden');
+var openPopup = function (target) {
+  var popup = document.querySelectorAll('.popup');
+  for (var i = 0; i < popup.length; i++) {
+    popup[i].classList.add('hidden');
+    if (target === popup[i].querySelector('img').src) {
+      popup[i].classList.remove('hidden');
+    }
+  }
 };
+
+disableFormFields();
+mapPins.addEventListener('click', clickHandler);
+mapPins.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEY_CODE) {
+    var popup = document.querySelectorAll('.popup');
+    for (var i = 0; i < popup.length; i++) {
+      popup[i].classList.add('hidden');
+      selectedPin.classList.remove('map__pin--active');
+    }
+  }
+});
+mapPins.addEventListener('keydown', keyDownHandler);
+mainPin.addEventListener('mouseup', onMainPinMouseup);
