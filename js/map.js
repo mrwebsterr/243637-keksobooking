@@ -1,4 +1,5 @@
 'use strict';
+
 var ENTER_KEY_CODE = 13;
 var ESC_KEY_CODE = 27;
 
@@ -180,6 +181,7 @@ var clickHandler = function (evt) {
 };
 var keyDownHandler = function (evt) {
   if (evt.keyCode === ENTER_KEY_CODE) {
+    evt.preventDefault();
     var target = evt.target.querySelector('img');
     var targetSrc = target.src;
     selectPin(evt.target);
