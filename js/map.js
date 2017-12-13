@@ -156,6 +156,10 @@ var onMainPinMouseup = function () {
   insertRenderedBefore(renderFeaturePopup, mapBlock, mapFiltersContainer);
   enableFormFields();
   closePopup();
+  setTimeValue();
+  setLodgingType();
+  setGuestsValue();
+  checkValidity();
   mainPin.removeEventListener('mouseup', onMainPinMouseup);
 };
 
@@ -206,6 +210,64 @@ var openPopup = function (target) {
     if (target === popup[i].querySelector('img').src) {
       popup[i].classList.remove('hidden');
     }
+  }
+};
+
+var setTimeValue = function () {
+  var timeInField = document.querySelector('#timein');
+  var timeInValue = document.querySelectorAll('#timein option');
+  var timeOutValue = document.querySelectorAll('#timeout option');
+
+  timeInField.addEventListener('change', function (evt) {
+    for (var i = 0; i < timeInValue.length; i++) {
+      timeOutValue[i].removeAttribute('selected');
+      if (evt.target.value === timeOutValue[i].value) {
+        timeOutValue[i].setAttribute('selected', 'selected');
+      }
+    }
+  });
+};
+var setLodgingType = function () {
+  var lodgingType = document.querySelector('#type');
+  var lodgingPrice = document.querySelector('#price');
+  lodgingType.addEventListener('change', function (evt) {
+    switch (evt.target.value) {
+      case 'bungalo': lodgingPrice.minLength = '0';
+        break;
+      case 'flat': lodgingPrice.minLength = '1000';
+        break;
+      case 'house': lodgingPrice.minLength = '5000';
+        break;
+      case 'palace': lodgingPrice.minLength = '10000';
+        break;
+    }
+  });
+};
+var setGuestsValue = function () {
+  var roomNumber = document.querySelector('#room_number');
+  var roomNumberValue = document.querySelectorAll('#room_number option');
+  var guestsNumberValue = document.querySelectorAll('#capacity option');
+
+  roomNumber.addEventListener('change', function (evt) {
+    for (var i = 0; i < roomNumberValue.length; i++) {
+      guestsNumberValue[i].removeAttribute('selected');
+      if (evt.target.value === guestsNumberValue[i].value) {
+        guestsNumberValue[i].setAttribute('selected', 'selected');
+      }
+    }
+    if (evt.target.value === '100') {
+      guestsNumberValue[3].setAttribute('selected', 'selected');
+    }
+  });
+};
+var checkValidity = function () {
+  var noticeForm = document.querySelector('.notice__form');
+  var inputs = noticeForm.querySelectorAll('.form__element input');
+  var onInvalidHandler = function (evt) {
+    evt.target.style.borderColor = 'red';
+  };
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].addEventListener('invalid', onInvalidHandler);
   }
 };
 
