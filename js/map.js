@@ -1,7 +1,7 @@
 'use strict';
 
-var ENTER_KEY_CODE = 13;
-var ESC_KEY_CODE = 27;
+var ENTER_KEYCODE = 13;
+var ESC_KEYCODE = 27;
 
 var randomNumberInRange = function (min, max) {
   return Math.round(Math.random() * (max - min) + min);
@@ -87,6 +87,19 @@ var featuresListTemplate = document.querySelector('template').content.querySelec
 var mapPinsBlock = document.querySelector('.map__pins');
 var mapFiltersContainer = document.querySelector('.map__filters-container');
 
+var lodgingType = document.querySelector('#type');
+var lodgingPrice = document.querySelector('#price');
+
+var roomNumber = document.querySelector('#room_number');
+var roomNumberValue = document.querySelectorAll('#room_number option');
+var guestsNumberValue = document.querySelectorAll('#capacity option');
+
+var noticeForm = document.querySelector('.notice__form');
+var inputs = noticeForm.querySelectorAll('.form__element input');
+
+var timeInField = document.querySelector('#timein');
+var timeInValue = document.querySelectorAll('#timein option');
+var timeOutValue = document.querySelectorAll('#timeout option');
 
 var renderPins = function (pin) {
   var mapPin = mapPinTemplate.cloneNode(true);
@@ -157,7 +170,7 @@ var onMainPinMouseup = function () {
   enableFormFields();
   closePopup();
   setTimeValue();
-  setLodgingType();
+  setLodgingMinPrice();
   setGuestsValue();
   checkValidity();
   mainPin.removeEventListener('mouseup', onMainPinMouseup);
@@ -184,7 +197,7 @@ var clickHandler = function (evt) {
   }
 };
 var keyDownHandler = function (evt) {
-  if (evt.keyCode === ENTER_KEY_CODE) {
+  if (evt.keyCode === ENTER_KEYCODE) {
     evt.preventDefault();
     var target = evt.target.querySelector('img');
     var targetSrc = target.src;
@@ -214,10 +227,6 @@ var openPopup = function (target) {
 };
 
 var setTimeValue = function () {
-  var timeInField = document.querySelector('#timein');
-  var timeInValue = document.querySelectorAll('#timein option');
-  var timeOutValue = document.querySelectorAll('#timeout option');
-
   timeInField.addEventListener('change', function (evt) {
     for (var i = 0; i < timeInValue.length; i++) {
       timeOutValue[i].removeAttribute('selected');
@@ -227,27 +236,18 @@ var setTimeValue = function () {
     }
   });
 };
-var setLodgingType = function () {
-  var lodgingType = document.querySelector('#type');
-  var lodgingPrice = document.querySelector('#price');
+var setLodgingMinPrice = function () {
+  var lodgingTypeToMinPrice = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000'
+  };
   lodgingType.addEventListener('change', function (evt) {
-    switch (evt.target.value) {
-      case 'bungalo': lodgingPrice.minLength = '0';
-        break;
-      case 'flat': lodgingPrice.minLength = '1000';
-        break;
-      case 'house': lodgingPrice.minLength = '5000';
-        break;
-      case 'palace': lodgingPrice.minLength = '10000';
-        break;
-    }
+    return (lodgingPrice.minLength = lodgingTypeToMinPrice[evt.target.value]);
   });
 };
 var setGuestsValue = function () {
-  var roomNumber = document.querySelector('#room_number');
-  var roomNumberValue = document.querySelectorAll('#room_number option');
-  var guestsNumberValue = document.querySelectorAll('#capacity option');
-
   roomNumber.addEventListener('change', function (evt) {
     for (var i = 0; i < roomNumberValue.length; i++) {
       guestsNumberValue[i].removeAttribute('selected');
@@ -261,8 +261,6 @@ var setGuestsValue = function () {
   });
 };
 var checkValidity = function () {
-  var noticeForm = document.querySelector('.notice__form');
-  var inputs = noticeForm.querySelectorAll('.form__element input');
   var onInvalidHandler = function (evt) {
     evt.target.style.borderColor = 'red';
   };
@@ -274,7 +272,7 @@ var checkValidity = function () {
 disableFormFields();
 mapPins.addEventListener('click', clickHandler);
 mapPins.addEventListener('keydown', function (evt) {
-  if (evt.keyCode === ESC_KEY_CODE) {
+  if (evt.keyCode === ESC_KEYCODE) {
     var popup = document.querySelectorAll('.popup');
     for (var i = 0; i < popup.length; i++) {
       popup[i].classList.add('hidden');
