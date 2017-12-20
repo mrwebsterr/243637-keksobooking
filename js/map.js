@@ -4,6 +4,18 @@
   var mapBlock = document.querySelector('.map');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var featuresListTemplate = document.querySelector('template').content.querySelector('.popup__features');
+  var lodgingType = document.querySelector('#type');
+  var lodgingPrice = document.querySelector('#price');
+  var lodgingTypeToMinPrice = {
+    'bungalo': '0',
+    'flat': '1000',
+    'house': '5000',
+    'palace': '10000'
+  };
+  var roomNumber = document.querySelector('#room_number');
+  var guestsNumberValue = document.querySelectorAll('#capacity option');
+  var timeInField = document.querySelector('#timein');
+  var timeOutValue = document.querySelectorAll('#timeout option');
   var similarAds = [];
   var generateSimilarAds = function (adsCount) {
     for (var i = 0; i < adsCount; i++) {
@@ -41,10 +53,10 @@
     window.util.insertRenderedBefore(window.card.renderFeaturePopup, similarAds, mapBlock, mapFiltersContainer);
     window.util.closePopup();
     window.form.enableFormFields();
-    window.form.setTimeValue();
-    window.form.setLodgingMinPrice();
-    window.form.setGuestsValue();
     window.form.checkValidity();
+    window.synchronize(roomNumber, guestsNumberValue);
+    window.synchronize(timeInField, timeOutValue);
+    window.synchronize(lodgingType, lodgingPrice, lodgingTypeToMinPrice);
     window.pin.mainPin.removeEventListener('mouseup', onMainPinMouseup);
   };
   window.form.disableFormFields();
