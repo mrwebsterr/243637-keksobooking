@@ -12,15 +12,6 @@
     selectedPin = node;
     selectedPin.classList.add('map__pin--active');
   };
-  var openPopup = function (target) {
-    var popup = document.querySelectorAll('.popup');
-    for (var i = 0; i < popup.length; i++) {
-      popup[i].classList.add('hidden');
-      if (target === popup[i].querySelector('img').src) {
-        popup[i].classList.remove('hidden');
-      }
-    }
-  };
 
   window.util = {
     randomNumberInRange: function (min, max) {
@@ -75,7 +66,7 @@
       while (target !== window.pin.mapPins) {
         if (target.tagName === 'BUTTON') {
           selectPin(target);
-          openPopup(targetSrc);
+          window.showCard(targetSrc);
           return;
         }
         target = target.parentNode;
@@ -87,7 +78,7 @@
         var target = evt.target;
         var targetSrc = target.querySelector('img').src;
         selectPin(target);
-        openPopup(targetSrc);
+        window.showCard(targetSrc);
       }
     },
     isEsc: function (evt) {
