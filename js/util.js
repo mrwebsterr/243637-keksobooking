@@ -66,9 +66,9 @@
     isEnter: function (evt) {
       if (evt.keyCode === ENTER_KEYCODE) {
         evt.preventDefault();
-        window.util.closePopup();
         var target = evt.target;
         var targetSrc = target.querySelector('img').src;
+        window.util.closePopup();
         selectPin(target);
         window.showCard(targetSrc);
       }
