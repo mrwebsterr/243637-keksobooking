@@ -40,21 +40,22 @@
     var price = notice.querySelector('#price');
     var timeIn = notice.querySelector('#timein');
     var timeOut = notice.querySelector('#timeout');
+    var description = notice.querySelector('#description');
+    var features = notice.querySelectorAll('.form__element input');
+
     if (title) {
       title.value = '';
     }
-    type.value = 'bungalo';
-    price.value = 1000;
-    price.minLength = 0;
-    timeIn.value = '12:00';
-    timeOut.value = '12:00';
-    roomCount.value = '1';
+    type.value = window.data.offerType[2];
+    price.value = window.data.offerDefaultPrice;
+    price.min = window.data.offerMinPrice;
+    timeIn.value = window.data.offerTimes[1];
+    timeOut.value = window.data.offerTimes[1];
+    roomCount.value = window.data.offerDefaultRoomCount;
     window.form.updateSelectOptions(capacity, roomToCapacity[roomCount.value]);
-    var description = notice.querySelector('#description');
     if (description) {
       description.value = '';
     }
-    var features = notice.querySelectorAll('.form__element input');
     if (features) {
       features.forEach(function (item) {
         item.checked = false;
@@ -63,29 +64,27 @@
   };
 
 
-  if (formSubmit) {
-    formSubmit.addEventListener('click', function (evt) {
-      var isFormCorrect = true;
-      var formInputs = notice.querySelectorAll('input');
-      formInputs.forEach(function (item) {
-        if (!item.validity.valid) {
-          isFormCorrect = false;
-        }
-      });
-      if (isFormCorrect) {
-        if (form) {
-          window.backend.send(new FormData(form), resetFormToDefault, window.util.onError);
-          evt.preventDefault();
-        }
+  formSubmit.addEventListener('click', function (evt) {
+    var isFormCorrect = true;
+    var formInputs = notice.querySelectorAll('input');
+    formInputs.forEach(function (item) {
+      if (!item.validity.valid) {
+        isFormCorrect = false;
       }
     });
-  }
+    if (isFormCorrect) {
+      if (form) {
+        evt.preventDefault();
+        window.backend.send(new FormData(form), resetFormToDefault, window.util.onError);
+      }
+    }
+  });
   window.form = {
     removeElements: function (parent) {
+      var option = document.createElement('option');
       parent.forEach(function (item) {
         item.remove();
       });
-      var option = document.createElement('option');
       option.value = capacityMap[1].value;
       option.textContent = capacityMap[1].text;
       capacity.appendChild(option);
