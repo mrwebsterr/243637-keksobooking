@@ -7,7 +7,7 @@
     renderFeaturePopup: function (popup) {
       var mapCard = mapCardTemplate.cloneNode(true);
       var featuresList = mapCard.querySelector('.map__card .popup__features');
-
+      var li = document.createElement('li');
       mapCard.querySelector('.map__card h3').textContent = popup.offer.title;
       mapCard.querySelector('.map__card p small').textContent = popup.location.x + ' ' + popup.location.y;
       mapCard.querySelector('.map__card .popup__price').textContent = popup.offer.price + '₽/ночь';
@@ -16,7 +16,6 @@
       mapCard.querySelector('.map__card h4').textContent = window.data.offerTypeOutput[popup.offer.type].name;
       mapCard.querySelector('.popup img').src = popup.author.avatar;
       for (var j = 0; j < popup.offer.features.length; j++) {
-        var li = document.createElement('li');
         li.classList = 'feature feature--' + popup.offer.features[j];
         featuresList.appendChild(li);
       }
