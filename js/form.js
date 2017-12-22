@@ -81,6 +81,15 @@
     });
   }
   window.form = {
+    removeElements: function (parent) {
+      parent.forEach(function (item) {
+        item.remove();
+      });
+      var option = document.createElement('option');
+      option.value = capacityMap[1].value;
+      option.textContent = capacityMap[1].text;
+      capacity.appendChild(option);
+    },
     updateSelectOptions: function (select, options) {
       window.util.removeChildren(select);
       options.forEach(function (item) {
