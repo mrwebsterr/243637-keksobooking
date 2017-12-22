@@ -11,6 +11,7 @@
   var lodgingPrice = document.querySelector('#price');
   var timeInField = notice.querySelector('#timein');
   var timeOutValue = notice.querySelector('#timeout');
+
   var lodgingTypeToMinPrice = {
     'bungalo': '0',
     'flat': '1000',
@@ -28,78 +29,32 @@
     '13:00': '13:00',
     '14:00': '14:00'
   };
-  var capacityMap = {
-    1: {
-      value: '1',
-      text: 'для 1 гостя'
-    },
-    2: {
-      value: '2',
-      text: 'для 2 гостей'
-    },
-    3: {
-      value: '3',
-      text: 'для 3 гостей'
-    },
-    noGuests: {
-      value: '0',
-      text: 'не для гостей'
-    }
-  };
   var setMinValue = function (element, type) {
     element.minLength = type;
   };
 
-  var similarAds = [];
-  var generateSimilarAds = function (adsCount) {
-    for (var i = 0; i < adsCount; i++) {
-      var locationX = window.util.randomLocationX();
-      var locationY = window.util.randomLocationY();
-      similarAds.push({
-        'author': {
-          'avatar': 'img/avatars/user0' + (i + 1) + '.png'
-        },
-        'offer': {
-          'title': window.data.offerTitle[i],
-          'address': locationX + ' ' + locationY,
-          'price': window.util.randomPrice(),
-          'type': window.util.generateRandomItem(window.data.offerType),
-          'rooms': window.util.randomRooms(),
-          'guests': window.util.randomGuests(),
-          'checkin': window.util.generateRandomItem(window.data.offerTimes),
-          'checkout': window.util.generateRandomItem(window.data.offerTimes),
-          'features': window.util.generateRandomFeatures(),
-          'description': '',
-          'photos': []
-        },
-        'location': {
-          'x': locationX,
-          'y': locationY
-        }
-      });
+  var fragment = document.createDocumentFragment();
+  var ADS_COUNT = 8;
+  var appendRendered = function (pins) {
+    for (var i = 0; i < ADS_COUNT; i++) {
+      fragment.appendChild(window.pin.renderPins(pins[i]));
     }
+    window.pin.mapPins.appendChild(fragment);
   };
-  var updateSelectOptions = function (select, options) {
-    window.util.removeChildren(select);
-    options.forEach(function (item) {
-      var option = document.createElement('option');
-      option.value = capacityMap[item].value;
-      option.textContent = capacityMap[item].text;
-      select.appendChild(option);
-    });
+  var insertRenderedBefore = function (cards) {
+    for (var i = 0; i < ADS_COUNT; i++) {
+      fragment.appendChild(window.card.renderFeaturePopup(cards[i]));
+    }
+    mapBlock.insertBefore(fragment, mapFiltersContainer);
   };
-
-
   var onMainPinMouseup = function () {
     mapBlock.classList.remove('map--faded');
     window.util.removeChildren(featuresListTemplate);
-    generateSimilarAds(8);
-    window.util.appendRendered(window.pin.renderPins, similarAds, window.pin.mapPins);
-    window.util.insertRenderedBefore(window.card.renderFeaturePopup, similarAds, mapBlock, mapFiltersContainer);
-    window.util.closePopup();
+    window.backend.load(appendRendered, window.util.onError);
+    window.backend.load(insertRenderedBefore, window.util.onError);
     window.form.enableFormFields();
     window.form.checkValidity();
-    window.synchronize(roomCount, capacity, roomToCapacity, updateSelectOptions);
+    window.synchronize(roomCount, capacity, roomToCapacity, window.form.updateSelectOptions);
     window.synchronize(timeInField, timeOutValue, timeInToTimeOut, window.util.selectByValue);
     window.synchronize(timeOutValue, timeInField, timeInToTimeOut, window.util.selectByValue);
     window.synchronize(lodgingType, lodgingPrice, lodgingTypeToMinPrice, setMinValue);
@@ -107,6 +62,7 @@
   };
   window.form.disableFormFields();
   window.pin.mapPins.addEventListener('click', window.util.clickHandler);
+  window.pin.mapPins.addEventListener('click', window.util.closePopup);
   window.pin.mapPins.addEventListener('keydown', window.util.isEsc);
   window.pin.mapPins.addEventListener('keydown', window.util.isEnter);
   window.pin.mainPin.addEventListener('mouseup', onMainPinMouseup);
