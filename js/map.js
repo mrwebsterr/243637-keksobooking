@@ -7,6 +7,7 @@
   var notice = document.querySelector('.notice');
   var roomCount = notice.querySelector('#room_number');
   var capacity = notice.querySelector('#capacity');
+  var capacityOptions = document.querySelectorAll('#capacity option');
   var lodgingType = document.querySelector('#type');
   var lodgingPrice = document.querySelector('#price');
   var timeInField = notice.querySelector('#timein');
@@ -53,6 +54,7 @@
     window.backend.load(appendRendered, window.util.onError);
     window.backend.load(insertRenderedBefore, window.util.onError);
     window.form.enableFormFields();
+    window.form.removeElements(capacityOptions);
     window.form.checkValidity();
     window.synchronize(roomCount, capacity, roomToCapacity, window.form.updateSelectOptions);
     window.synchronize(timeInField, timeOutValue, timeInToTimeOut, window.util.selectByValue);
