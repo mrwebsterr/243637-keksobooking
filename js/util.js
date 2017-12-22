@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var fragment = document.createDocumentFragment();
   var selectedPin;
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
@@ -14,27 +13,21 @@
   };
 
   window.util = {
-    randomNumberInRange: function (min, max) {
-      return Math.round(Math.random() * (max - min) + min);
-    },
-    randomPrice: function () {
-      return this.randomNumberInRange(1000, 1000000);
-    },
-    randomRooms: function () {
-      return this.randomNumberInRange(1, 5);
-    },
-    randomGuests: function () {
-      return this.randomNumberInRange(2, 6);
-    },
-    randomLocationX: function () {
-      return this.randomNumberInRange(300, 900);
-    },
-    randomLocationY: function () {
-      return this.randomNumberInRange(100, 500);
-    },
-    generateRandomItem: function (arr) {
-      var item = Math.floor(Math.random() * arr.length);
-      return arr[item];
+    onError: function (errorMessage) {
+      var message = document.createElement('div');
+      var overlay = document.createElement('div');
+      overlay.style = 'z-index: 100; background-color: rgba(255, 255, 255, 0.5); width: 100%; height: 100%;';
+      overlay.style.position = 'fixed';
+      message.style = 'z-index: 1000; text-transform: uppercase; font-weight: bold; width: 1000px; margin: 0 auto; text-align: center; background-color: red; color: white; padding: 50px 0px;';
+      message.style.position = 'absolute';
+      message.style.top = 50 + '%';
+      message.style.left = 0;
+      message.style.right = 0;
+      message.style.fontSize = '30px';
+
+      message.textContent = errorMessage;
+      document.body.insertAdjacentElement('afterbegin', message);
+      document.body.insertAdjacentElement('afterbegin', overlay);
     },
     closePopup: function () {
       var popupCloseBtn = document.querySelectorAll('.popup__close');
@@ -45,15 +38,6 @@
           selectedPin.classList.remove('map__pin--active');
         });
       }
-    },
-    generateRandomFeatures: function () {
-      var arr = [];
-      var startItem = Math.floor(Math.random() * 2);
-      var lastItem = Math.floor(Math.random() * 6);
-      for (var i = startItem; i <= lastItem; i++) {
-        arr.push(window.data.offerFeatures[i]);
-      }
-      return arr;
     },
     removeChildren: function (elem) {
       while (elem.lastChild) {
@@ -75,6 +59,7 @@
     isEnter: function (evt) {
       if (evt.keyCode === ENTER_KEYCODE) {
         evt.preventDefault();
+        window.util.closePopup();
         var target = evt.target;
         var targetSrc = target.querySelector('img').src;
         selectPin(target);
@@ -89,18 +74,6 @@
           selectedPin.classList.remove('map__pin--active');
         }
       }
-    },
-    appendRendered: function (element, arr, block) {
-      for (var i = 0; i < arr.length; i++) {
-        fragment.appendChild(element(arr[i]));
-      }
-      return block.appendChild(fragment);
-    },
-    insertRenderedBefore: function (element, arr, insertBlock, beforeBlock) {
-      for (var i = 0; i < arr.length; i++) {
-        fragment.appendChild(element(arr[i]));
-      }
-      return insertBlock.insertBefore(fragment, beforeBlock);
     },
     selectByValue: function (select, value) {
       [].forEach.call(select.options, function (item, i) {
