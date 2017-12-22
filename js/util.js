@@ -1,9 +1,11 @@
 'use strict';
 
 (function () {
-  var selectedPin;
   var ENTER_KEYCODE = 13;
   var ESC_KEYCODE = 27;
+  var DEBOUNCE_INTERVAL = 500;
+  var debounceLastTimeout;
+  var selectedPin;
   var selectPin = function (node) {
     if (selectedPin) {
       selectedPin.classList.remove('map__pin--active');
@@ -11,8 +13,13 @@
     selectedPin = node;
     selectedPin.classList.add('map__pin--active');
   };
-
   window.util = {
+    debounce: function (func) {
+      if (debounceLastTimeout) {
+        window.clearTimeout(debounceLastTimeout);
+      }
+      debounceLastTimeout = window.setTimeout(func, DEBOUNCE_INTERVAL);
+    },
     onError: function (errorMessage) {
       var message = document.createElement('div');
       var overlay = document.createElement('div');
