@@ -101,6 +101,13 @@
         fragment.appendChild(element(arr[i]));
       }
       return insertBlock.insertBefore(fragment, beforeBlock);
+    },
+    selectByValue: function (select, value) {
+      [].forEach.call(select.options, function (item, i) {
+        if (item.value === value) {
+          select.options.selectedIndex = i;
+        }
+      });
     }
   };
 })();
