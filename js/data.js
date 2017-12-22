@@ -6,6 +6,9 @@
     offerFeatures: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
     offerTimes: ['12:00', '13:00', '14:00'],
     offerType: ['flat', 'house', 'bungalo'],
-    offerTypeOutput: {'flat': {name: 'Квартира'}, 'house': {name: 'Дом'}, 'bungalo': {name: 'Бунгало'}}
+    offerTypeOutput: {'flat': {name: 'Квартира'}, 'house': {name: 'Дом'}, 'bungalo': {name: 'Бунгало'}},
+    offerMinPrice: 0,
+    offerDefaultPrice: 0,
+    offerDefaultRoomCount: 1
   };
 })();

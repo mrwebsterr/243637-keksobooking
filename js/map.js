@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-
+  var ADS_COUNT = 8;
   var mapBlock = document.querySelector('.map');
   var mapFiltersContainer = document.querySelector('.map__filters-container');
   var featuresListTemplate = document.querySelector('template').content.querySelector('.popup__features');
@@ -31,11 +31,11 @@
     '14:00': '14:00'
   };
   var setMinValue = function (element, type) {
-    element.minLength = type;
+    element.min = type;
+    lodgingPrice.value = element.min;
   };
 
   var fragment = document.createDocumentFragment();
-  var ADS_COUNT = 8;
   var appendRendered = function (pins) {
     for (var i = 0; i < ADS_COUNT; i++) {
       fragment.appendChild(window.pin.renderPins(pins[i]));
