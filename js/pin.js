@@ -25,10 +25,10 @@
   };
   var createButton = function (ad) {
     var button = document.createElement('button');
+    var img = document.createElement('img');
     button.classList.add('map__pin');
     button.style.left = (ad.location.x - IMG_WIDTH / 2) + 'px';
     button.style.top = (ad.location.y - (IMG_HEIGHT + ARROW_HEIGHT)) + 'px';
-    var img = document.createElement('img');
     img.src = ad.author.avatar;
     img.width = IMG_WIDTH;
     img.height = IMG_HEIGHT;
@@ -140,6 +140,7 @@
       var maxBottomPoint = 500;
       var mainPinX = (window.pin.mainPin.offsetLeft - shift.x);
       var mainPinY = (window.pin.mainPin.offsetTop - (shift.y + mainPinHeight));
+      var adrInput = document.querySelector('#address');
       if (mainPinY < maxTopPoint || mainPinY > maxBottomPoint) {
         return;
       }
@@ -147,7 +148,6 @@
         x: moveEvt.clientX,
         y: moveEvt.clientY
       };
-      var adrInput = document.querySelector('#address');
       adrInput.value = 'x: ' + mainPinX + ', y: ' + mainPinY;
       window.pin.mainPin.style.top = (mainPinY + mainPinHeight) + 'px';
       window.pin.mainPin.style.left = mainPinX + 'px';
