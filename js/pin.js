@@ -1,6 +1,16 @@
 'use strict';
 
 (function () {
+  var IMG_WIDTH = 40;
+  var IMG_HEIGHT = 40;
+  var ARROW_HEIGHT = 22;
+  var MAX_ADS_COUNT = 8;
+  var DEFAULT_ADS_COUNT = 5;
+  var filter = {
+    features: []
+  };
+  var ads = [];
+  var pinFromServer;
   var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
   window.pin = {
     renderPins: function (pin) {
@@ -13,6 +23,106 @@
     mapPins: document.querySelector('.map__pins'),
     mainPin: document.querySelector('.map__pin--main')
   };
+  var createButton = function (ad) {
+    var button = document.createElement('button');
+    button.classList.add('map__pin');
+    button.style.left = (ad.location.x - IMG_WIDTH / 2) + 'px';
+    button.style.top = (ad.location.y - (IMG_HEIGHT + ARROW_HEIGHT)) + 'px';
+    var img = document.createElement('img');
+    img.src = ad.author.avatar;
+    img.width = IMG_WIDTH;
+    img.height = IMG_HEIGHT;
+    img.draggable = false;
+    button.appendChild(img);
+    return button;
+  };
+
+  var checkPinByFilter = function (pin) {
+    if (filter.housingType && pin.offer.type !== filter.housingType) {
+      return false;
+    }
+    if (filter.lodgingPrice) {
+      if (filter.lodgingPrice === 'low' && pin.offer.price > 10000) {
+        return false;
+      }
+      if (filter.lodgingPrice === 'middle' && (pin.offer.price < 10000 || pin.offer.price > 50000)) {
+        return false;
+      }
+      if (filter.lodgingPrice === 'high' && pin.offer.price < 50000) {
+        return false;
+      }
+    }
+    if (filter.lodgingRooms && pin.offer.rooms.toString() !== filter.lodgingRooms) {
+      return false;
+    }
+    if (filter.lodgingGuests && pin.offer.guests.toString() !== filter.lodgingGuests) {
+      return false;
+    }
+    var hasAllFeatures = filter.features.every(function (it) {
+      return pin.offer.features.indexOf(it) >= 0;
+    });
+    return hasAllFeatures;
+  };
+  var onLoadAds = function (response) {
+    pinFromServer = response;
+    fillMapPin(true);
+  };
+  var fillMapPin = function (isFirstLoad) {
+    if (!pinFromServer) {
+      window.backend.load(onLoadAds, window.util.onError);
+    } else {
+      var mapPins = document.querySelector('.map__pins');
+      var fragment = document.createDocumentFragment();
+      if (filter) {
+        ads = pinFromServer.filter(checkPinByFilter);
+      }
+      if (isFirstLoad) {
+        ads = ads.slice(0, DEFAULT_ADS_COUNT);
+      } else {
+        ads = ads.slice(0, MAX_ADS_COUNT);
+      }
+      ads.forEach(function (item) {
+        fragment.appendChild(createButton(item));
+      });
+      window.util.closePopup();
+      while (mapPins.childElementCount > 2) {
+        mapPins.removeChild(mapPins.lastElementChild);
+      }
+      mapPins.appendChild(fragment);
+    }
+  };
+  var filterContainer = document.querySelector('.map__filters-container');
+  var addEventToSelectFilter = function (id, filterName) {
+    var select = filterContainer.querySelector('#' + id);
+    if (select) {
+      select.addEventListener('change', function (evt) {
+        var selectedItem = evt.target.value;
+        if (selectedItem !== 'any') {
+          filter[filterName] = selectedItem;
+        } else {
+          filter[filterName] = null;
+        }
+      });
+    }
+  };
+  filterContainer.addEventListener('change', function () {
+    window.util.debounce(fillMapPin);
+  });
+  var features = filterContainer.querySelector('#housing-features');
+  if (features) {
+    features.addEventListener('change', function (evt) {
+      var featureName = evt.target.value;
+      if (evt.target.checked) {
+        filter.features.push(featureName);
+      } else {
+        filter.features.splice(filter.features.indexOf(featureName), 1);
+      }
+    });
+  }
+  addEventToSelectFilter('housing-type', 'housingType');
+  addEventToSelectFilter('housing-price', 'housingPrice');
+  addEventToSelectFilter('housing-rooms', 'housingRooms');
+  addEventToSelectFilter('housing-guests', 'housingGuests');
   var onMouseDown = function (evt) {
     evt.preventDefault();
     var startCoords = {
