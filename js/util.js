@@ -88,6 +88,14 @@
           select.options.selectedIndex = i;
         }
       });
+    },
+    hideAdCard: function () {
+      var activeCards = document.querySelectorAll('.popup');
+      if (activeCards) {
+        activeCards.forEach(function (item) {
+          item.classList.add('hidden');
+        });
+      }
     }
   };
 })();
