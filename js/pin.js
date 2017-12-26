@@ -12,6 +12,9 @@
   var ads = [];
   var pinFromServer;
   var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
+  var filterContainer = document.querySelector('.map__filters-container');
+  var features = filterContainer.querySelector('#housing-features');
+
   window.pin = {
     renderPins: function (pin) {
       var mapPin = mapPinTemplate.cloneNode(true);
@@ -41,21 +44,21 @@
     if (filter.housingType && pin.offer.type !== filter.housingType) {
       return false;
     }
-    if (filter.lodgingPrice) {
-      if (filter.lodgingPrice === 'low' && pin.offer.price > 10000) {
+    if (filter.housingPrice) {
+      if (filter.housingPrice === 'low' && pin.offer.price > 10000) {
         return false;
       }
-      if (filter.lodgingPrice === 'middle' && (pin.offer.price < 10000 || pin.offer.price > 50000)) {
+      if (filter.housingPrice === 'middle' && (pin.offer.price < 10000 || pin.offer.price > 50000)) {
         return false;
       }
-      if (filter.lodgingPrice === 'high' && pin.offer.price < 50000) {
+      if (filter.housingPrice === 'high' && pin.offer.price < 50000) {
         return false;
       }
     }
-    if (filter.lodgingRooms && pin.offer.rooms.toString() !== filter.lodgingRooms) {
+    if (filter.housingRooms && pin.offer.rooms.toString() !== filter.housingRooms) {
       return false;
     }
-    if (filter.lodgingGuests && pin.offer.guests.toString() !== filter.lodgingGuests) {
+    if (filter.housingGuests && pin.offer.guests.toString() !== filter.housingGuests) {
       return false;
     }
     var hasAllFeatures = filter.features.every(function (it) {
@@ -91,7 +94,6 @@
       mapPins.appendChild(fragment);
     }
   };
-  var filterContainer = document.querySelector('.map__filters-container');
   var addEventToSelectFilter = function (id, filterName) {
     var select = filterContainer.querySelector('#' + id);
     if (select) {
@@ -107,8 +109,8 @@
   };
   filterContainer.addEventListener('change', function () {
     window.util.debounce(fillMapPin);
+    window.util.hideAdCard();
   });
-  var features = filterContainer.querySelector('#housing-features');
   if (features) {
     features.addEventListener('change', function (evt) {
       var featureName = evt.target.value;
