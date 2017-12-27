@@ -13,6 +13,12 @@
     selectedPin = node;
     selectedPin.classList.add('map__pin--active');
   };
+  var body = document.body;
+  var onClickRemove = function () {
+    body.firstChild.remove();
+    body.firstChild.remove();
+    body.removeEventListener('click', onClickRemove);
+  };
   window.util = {
     debounce: function (func) {
       if (debounceLastTimeout) {
@@ -23,7 +29,7 @@
     onError: function (errorMessage) {
       var message = document.createElement('div');
       var overlay = document.createElement('div');
-      overlay.style = 'z-index: 100; background-color: rgba(255, 255, 255, 0.5); width: 100%; height: 100%;';
+      overlay.style = 'z-index: 100; background-color: rgba(255, 255, 255, 0.5); width: 1200px; height: 100%; margin: 0 auto;';
       overlay.style.position = 'fixed';
       message.style = 'z-index: 1000; text-transform: uppercase; font-weight: bold; width: 1000px; margin: 0 auto; text-align: center; background-color: red; color: white; padding: 50px 0px;';
       message.style.position = 'absolute';
@@ -31,9 +37,9 @@
       message.style.left = 0;
       message.style.right = 0;
       message.style.fontSize = '30px';
-
       message.textContent = errorMessage;
       document.body.insertAdjacentElement('afterbegin', message);
+      body.addEventListener('click', onClickRemove);
       document.body.insertAdjacentElement('afterbegin', overlay);
     },
     closePopup: function () {
