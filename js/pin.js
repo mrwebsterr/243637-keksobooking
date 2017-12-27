@@ -14,8 +14,10 @@
   var mapPinTemplate = document.querySelector('template').content.querySelector('.map__pin');
   var filterContainer = document.querySelector('.map__filters-container');
   var features = filterContainer.querySelector('#housing-features');
-
+  var adrInput = document.querySelector('#address');
   window.pin = {
+    mapPins: document.querySelector('.map__pins'),
+    mainPin: document.querySelector('.map__pin--main'),
     renderPins: function (pin) {
       var mapPin = mapPinTemplate.cloneNode(true);
       mapPin.style.left = pin.location.x + 'px';
@@ -23,8 +25,11 @@
       mapPin.querySelector('.map__pin img').src = pin.author.avatar;
       return mapPin;
     },
-    mapPins: document.querySelector('.map__pins'),
-    mainPin: document.querySelector('.map__pin--main')
+    getMainPinLocation: function () {
+      this.mainPin.style.left = '600px';
+      this.mainPin.style.top = '375px';
+      adrInput.value = 'x: ' + 600 + ', y: ' + 291;
+    }
   };
   var createButton = function (ad) {
     var button = document.createElement('button');
@@ -142,7 +147,6 @@
       var maxBottomPoint = 500;
       var mainPinX = (window.pin.mainPin.offsetLeft - shift.x);
       var mainPinY = (window.pin.mainPin.offsetTop - (shift.y + mainPinHeight));
-      var adrInput = document.querySelector('#address');
       if (mainPinY < maxTopPoint || mainPinY > maxBottomPoint) {
         return;
       }
