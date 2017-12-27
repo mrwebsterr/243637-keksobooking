@@ -42,16 +42,24 @@
     var timeOut = notice.querySelector('#timeout');
     var description = notice.querySelector('#description');
     var features = notice.querySelectorAll('.form__element input');
-
+    var preview = document.querySelector('.notice__preview img');
+    var formPhotoContainer = document.querySelector('.form__photo-container');
+    var formPhotoContainerImgs = document.querySelectorAll('.form__photo-container img');
     if (title) {
       title.value = '';
     }
     type.value = window.data.offerType[2];
     price.value = window.data.offerDefaultPrice;
+    price.placeholder = window.data.offerMinPrice;
     price.min = window.data.offerMinPrice;
     timeIn.value = window.data.offerTimes[1];
     timeOut.value = window.data.offerTimes[1];
     roomCount.value = window.data.offerDefaultRoomCount;
+    preview.src = 'img/muffin.png';
+    window.util.removeImg(formPhotoContainer, formPhotoContainerImgs);
+    window.pin.mainPin.style.left = '600px';
+    window.pin.mainPin.style.top = '375px';
+    window.pin.getMainPinLocation();
     window.form.updateSelectOptions(capacity, roomToCapacity[roomCount.value]);
     if (description) {
       description.value = '';
