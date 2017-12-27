@@ -32,7 +32,10 @@
   };
   var setMinValue = function (element, type) {
     element.min = type;
-    lodgingPrice.value = element.min;
+    element.placeholder = type;
+    if (+element.value < +element.min) {
+      element.value = element.min;
+    }
   };
 
   var fragment = document.createDocumentFragment();
@@ -60,6 +63,7 @@
     window.synchronize(timeInField, timeOutValue, timeInToTimeOut, window.util.selectByValue);
     window.synchronize(timeOutValue, timeInField, timeInToTimeOut, window.util.selectByValue);
     window.synchronize(lodgingType, lodgingPrice, lodgingTypeToMinPrice, setMinValue);
+    window.pin.getMainPinLocation();
     window.pin.mainPin.removeEventListener('mouseup', onMainPinMouseup);
   };
   window.form.disableFormFields();
