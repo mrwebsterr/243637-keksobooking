@@ -51,6 +51,11 @@
         elem.removeChild(elem.lastChild);
       }
     },
+    removeImg: function (container, img) {
+      img.forEach(function (item) {
+        container.removeChild(item);
+      });
+    },
     clickHandler: function (evt) {
       var target = evt.target;
       var targetSrc = target.src;
